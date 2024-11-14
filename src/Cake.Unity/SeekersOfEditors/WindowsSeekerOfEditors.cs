@@ -29,10 +29,10 @@ namespace Cake.Unity.SeekersOfEditors
 
             var (year, stream, update) = (fileVersion.FileMajorPart, fileVersion.FileMinorPart, fileVersion.FileBuildPart);
 
-            if (year <= 0 || stream <= 0 || update < 0)
+            if (year <= 0 || stream < 0 || update < 0)
             {
                 log.Warning("Unity Editor file version {0} is incorrect.", $"{year}.{stream}.{update}.{fileVersion.FilePrivatePart}");
-                log.Warning("Expected first two numbers to be positive and third one to be non negative.");
+                log.Warning("Expected first number to be positive and the second to be greater or equal 0 and third one to be non negative.");
                 log.Warning("Path: {0}", editorPath.FullPath);
                 log.Warning(string.Empty);
                 return null;
