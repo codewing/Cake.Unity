@@ -4,6 +4,8 @@ using Cake.Core;
 using Cake.Core.Diagnostics;
 using Cake.Core.IO;
 using Cake.Unity.Version;
+using LanguageExt;
+using LanguageExt.Common;
 
 namespace Cake.Unity.SeekersOfEditors
 {
@@ -21,7 +23,7 @@ namespace Cake.Unity.SeekersOfEditors
             $"{ProgramFiles}/*Unity*/*/*/*/Editor/Unity.exe"
         };
 
-        protected override UnityVersion DetermineVersion(FilePath editorPath)
+        protected override Option<UnityVersion> DetermineVersion(FilePath editorPath)
         {
             log.Debug("Determining version of Unity Editor at path {0}...", editorPath);
 
@@ -33,9 +35,9 @@ namespace Cake.Unity.SeekersOfEditors
             {
                 log.Warning("Unity Editor file version {0} is incorrect.", $"{year}.{stream}.{update}.{fileVersion.FilePrivatePart}");
                 log.Warning("Expected first two numbers to be positive and third one to be non negative.");
-                log.Warning("Path: {0}", editorPath.FullPath);
+                log.Warning($"Path: {editorPath.FullPath}");
                 log.Warning(string.Empty);
-                return null;
+                return Option<UnityVersion>.None;
             }
 
             log.Debug("Unity version from file version: {0}.{1}.{2}", year, stream, update);

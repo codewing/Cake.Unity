@@ -5,6 +5,8 @@ using Cake.Core;
 using Cake.Core.Diagnostics;
 using Cake.Core.IO;
 using Cake.Unity.Version;
+using LanguageExt;
+using LanguageExt.Common;
 
 namespace Cake.Unity.SeekersOfEditors
 {
@@ -23,7 +25,7 @@ namespace Cake.Unity.SeekersOfEditors
                 return new OSXSeekerOfEditors(environment, globber, log, fileSystem);
 
             if (environment.Platform.Family == PlatformFamily.Linux)
-                return new LinuxSeekerOfEditors(environment, globber, log, fileSystem);
+                return new LinuxSeekerOfEditors(environment, globber, log);
 
             throw new NotSupportedException("Cannot locate Unity Editors. Only Windows, OSX and Linux is supported.");
         }
@@ -44,18 +46,19 @@ namespace Cake.Unity.SeekersOfEditors
             log.Debug("Found {0} candidates.", candidates.Count);
             log.Debug(string.Empty);
 
-            var editors =
-                from candidatePath in candidates
-                let version = DetermineVersion(candidatePath)
-                where version != null
-                select new UnityEditorDescriptor(version, candidatePath);
+            var editors = new List<UnityEditorDescriptor>();
+            foreach (var candidatePath in candidates)
+            {
+                var version = DetermineVersion(candidatePath);
+                version.IfSome(unityVersion => editors.Add(new UnityEditorDescriptor(unityVersion, candidatePath)));
+            }
 
             return editors.ToList();
         }
 
         protected abstract string[] SearchPatterns { get; }
 
-        protected abstract UnityVersion DetermineVersion(FilePath editorPath);
+        protected abstract Option<UnityVersion> DetermineVersion(FilePath editorPath);
 
         private List<FilePath> GetCandidates(string[] searchPatterns) =>
             searchPatterns.SelectMany(globber.GetFiles).ToList();

@@ -3,25 +3,24 @@ using Cake.Core.Diagnostics;
 using Cake.Core.IO;
 using Cake.Unity.Version;
 using System.Text.RegularExpressions;
+using LanguageExt;
 
 namespace Cake.Unity.SeekersOfEditors
 {
     internal class LinuxSeekerOfEditors : SeekerOfEditors
     {
-        private readonly IFileSystem fileSystem;
         private readonly Regex VersionRegex = new Regex("(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?<branch>\\w)(?<build>\\d+)");
 
-        public LinuxSeekerOfEditors(ICakeEnvironment environment, IGlobber globber, ICakeLog log, IFileSystem fileSystem)
+        public LinuxSeekerOfEditors(ICakeEnvironment environment, IGlobber globber, ICakeLog log)
             : base(environment, globber, log)
         {
-            this.fileSystem = fileSystem;
         }
 
         protected override string[] SearchPatterns => new[] {
             "/home/*/Unity/Hub/Editor/*/Editor/Unity"
             };
 
-        protected override UnityVersion DetermineVersion(FilePath editorPath)
+        protected override Option<UnityVersion> DetermineVersion(FilePath editorPath)
         {
             log.Debug($"Determining version of Unity Editor at path {editorPath}...");
 
@@ -30,7 +29,7 @@ namespace Cake.Unity.SeekersOfEditors
             if(!versionMatch.Success)
             {
                 log.Debug($"Can't find UnityVersion for {editorPath}");
-                return null;
+                return Option<UnityVersion>.None;
             }
 
             var major = int.Parse(versionMatch.Groups["major"].Value);

@@ -1,19 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <IsPackable>false</IsPackable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <RootNamespace>Cake.Unity.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Cake.Core" Version="1.0.0" />
-    <PackageReference Include="Cake.Testing" Version="1.0.0" />
-    <PackageReference Include="FSharp.Interop.Dynamic" Version="4.0.3.130" />
-    <PackageReference Include="FsUnit" Version="3.4.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0" />
+    <PackageReference Include="Cake.Core" Version="5.0.0" />
+    <PackageReference Include="Cake.Testing" Version="5.0.0" />
+    <PackageReference Include="FSharp.Interop.Dynamic" Version="5.0.1.268" />
+    <PackageReference Include="FsUnit" Version="6.0.1" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Update="FSharp.Core" Version="9.0.100" />
   </ItemGroup>
 
   <ItemGroup>

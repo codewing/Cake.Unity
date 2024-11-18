@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using LanguageExt;
 using static Cake.Unity.Version.UnityReleaseStage;
 
 namespace Cake.Unity.Version
@@ -9,7 +10,7 @@ namespace Cake.Unity.Version
         {
             { 'a', Alpha },
             { 'b', Beta },
-            { 'p', Patch },
+            { 'p', UnityReleaseStage.Patch },
             { 'f', Final },
         };
 
@@ -46,7 +47,7 @@ namespace Cake.Unity.Version
         public static UnityVersion Parse(string s)
         {
             var version = s.Split('.');
-            int charPos = (int)FirstNotDigit(version[2]);
+            var charPos = (int)FirstNotDigit(version[2]);
 
             return new UnityVersion(
                 year: int.Parse(version[0]),
@@ -56,12 +57,12 @@ namespace Cake.Unity.Version
                 suffixNumber: int.Parse(version[2].Substring(charPos + 1)));
         }
 
-        private static int? FirstNotDigit(string str)
+        private static Option<int> FirstNotDigit(string str)
         {
             for (int i = 0; i < str.Length; ++i)
                 if (!char.IsDigit(str[i]))
                     return i;
-            return null;
+            return Option<int>.None;
         }
 
         public bool Equals(UnityVersion other) =>

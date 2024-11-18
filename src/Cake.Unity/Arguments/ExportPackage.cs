@@ -6,7 +6,7 @@ namespace Cake.Unity.Arguments
 {
     public class ExportPackage
     {
-        public string[] AssetPaths { get; set; }
-        public string PackageName { get; set; }
+        public required string[] AssetPaths { get; set; }
+        public required string PackageName { get; set; }
     }
 }

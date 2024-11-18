@@ -1,14 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>1591;1573</NoWarn>
+    <LangVersion>default</LangVersion>
+    <Nullable>enable</Nullable>
+    <PackageTags>Cake, Script, Build, Unity, cake-addin</PackageTags>
+    <Version>0.0.1</Version>
+    <Title>Cake.Unity</Title>
+    <Authors>kolesnick, codewing, cake-contrib</Authors>
+    <Description>Cake AddIn that extends Cake with ability to execute the Unity Editor as a command line utility.</Description>
+    <Copyright>Copyright (c) Cake Contributions 2014 - Present</Copyright>
+    <PackageProjectUrl>https://github.com/cake-contrib/Cake.Unity/</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/cake-contrib/Cake.Unity/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/cake-contrib/Cake.Unity.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Cake.Core" Version="1.0.0" PrivateAssets="All" />
+    <PackageReference Include="Cake.Core" Version="5.0.0" PrivateAssets="All" />
+    <PackageReference Include="LanguageExt.Core" Version="4.4.9" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>

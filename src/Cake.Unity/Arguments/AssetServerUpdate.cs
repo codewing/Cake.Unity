@@ -1,13 +1,15 @@
-﻿namespace Cake.Unity.Arguments
+﻿using LanguageExt;
+
+namespace Cake.Unity.Arguments
 {
     public class AssetServerUpdate
     {
         public string IP { get; }
-        public int? Port { get; }
+        public Option<int> Port { get; }
         public string ProjectName { get; }
         public string Username { get; }
         public string Password { get; }
-        public string Revision { get; }
+        public Option<string> Revision { get; }
 
         public AssetServerUpdate(string ip, string projectName, string userName, string password)
         {
@@ -15,6 +17,7 @@
             ProjectName = projectName;
             Username = userName;
             Password = password;
+            Revision = Option<string>.None;
         }
 
         public AssetServerUpdate(string ip, int port, string projectName, string userName, string password)

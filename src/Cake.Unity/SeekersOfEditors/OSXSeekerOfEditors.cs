@@ -5,6 +5,7 @@ using Cake.Core;
 using Cake.Core.Diagnostics;
 using Cake.Core.IO;
 using Cake.Unity.Version;
+using LanguageExt;
 
 namespace Cake.Unity.SeekersOfEditors
 {
@@ -20,18 +21,18 @@ namespace Cake.Unity.SeekersOfEditors
 
         protected override string[] SearchPatterns => new[] {"/Applications/Unity/Hub/Editor/*/Unity.app/Contents/MacOS/Unity"};
 
-        protected override UnityVersion DetermineVersion(FilePath editorPath)
+        protected override Option<UnityVersion> DetermineVersion(FilePath editorPath)
         {
             log.Debug($"Determining version of Unity Editor at path {editorPath}...");
 
-            string version;
+            string? version;
             using (var stream = fileSystem.GetFile(PlistPath(editorPath)).OpenRead())
                 version = new InfoPlistParser().UnityVersionFromInfoPlist(stream);
 
             if (version == null)
             {
                 log.Debug($"Can't find UnityVersion for {editorPath}");
-                return null;
+                return Option<UnityVersion>.None;
             }
 
             var unityVersion = UnityVersion.Parse(version);
@@ -46,7 +47,7 @@ namespace Cake.Unity.SeekersOfEditors
 
     internal class InfoPlistParser
     {
-        public string UnityVersionFromInfoPlist(Stream infoPlistStream) =>
+        public string? UnityVersionFromInfoPlist(Stream infoPlistStream) =>
             XDocument
                 .Load(infoPlistStream)
                 .Descendants()

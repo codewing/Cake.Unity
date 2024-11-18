@@ -3,6 +3,7 @@ using System.Dynamic;
 using Cake.Core;
 using Cake.Core.IO;
 using Cake.Unity.Arguments;
+using LanguageExt.UnsafeValueAccess;
 
 namespace Cake.Unity
 {
@@ -16,7 +17,7 @@ namespace Cake.Unity
         /// <summary>
         /// Force an update of the project in the Asset Server given by IP:port. The port is optional, and if not given it is assumed to be the standard one (10733). It is advisable to use this command in conjunction with the -projectPath argument to ensure you are working with the correct project. If you don’t give a project name, then the command line uses the last project opened by Unity. If no project exists at the path -projectPath gives, then the command line creates one automatically.
         /// </summary>
-        public AssetServerUpdate AssetServerUpdate { get; set; }
+        public AssetServerUpdate? AssetServerUpdate { get; set; }
 
         /// <summary>
         /// <para>Run Unity in batch mode. You should always use this in conjunction with the other command line arguments, because it ensures no pop-up windows appear and eliminates the need for any human intervention. When an exception occurs during execution of the script code, the Asset server updates fail, or other operations fail, Unity immediately exits with return code 1. </para>
@@ -28,32 +29,32 @@ namespace Cake.Unity
         /// <summary>
         /// Build a 32-bit standalone Linux player (for example, -buildLinux32Player path/to/your/build).
         /// </summary>
-        public FilePath BuildLinux32Player { get; set; }
+        public FilePath? BuildLinux32Player { get; set; }
 
         /// <summary>
         /// Build a 64-bit standalone Linux player (for example, -buildLinux64Player path/to/your/build)
         /// </summary>
-        public FilePath BuildLinux64Player { get; set; }
+        public FilePath? BuildLinux64Player { get; set; }
 
         /// <summary>
         /// Build a combined 32-bit and 64-bit standalone Linux player (for example, -buildLinuxUniversalPlayer path/to/your/build)
         /// </summary>
-        public FilePath BuildLinuxUniversalPlayer { get; set; }
+        public FilePath? BuildLinuxUniversalPlayer { get; set; }
 
         /// <summary>
         /// Build a 32-bit standalone Mac OSX player (for example, -buildOSXPlayer path/to/your/build.app)
         /// </summary>
-        public FilePath BuildOSXPlayer { get; set; }
+        public FilePath? BuildOSXPlayer { get; set; }
 
         /// <summary>
         /// Build a 64-bit standalone Mac OSX player (for example, -buildOSX64Player path/to/your/build.app)
         /// </summary>
-        public FilePath BuildOSX64Player { get; set; }
+        public FilePath? BuildOSX64Player { get; set; }
 
         /// <summary>
         /// Build a combined 32-bit and 64-bit standalone Mac OSX player (for example, -buildOSXUniversalPlayer path/to/your/build.app)
         /// </summary>
-        public FilePath BuildOSXUniversalPlayer { get; set; }
+        public FilePath? BuildOSXUniversalPlayer { get; set; }
 
         /// <summary>
         /// Allows the selection of an active build target before loading a project.
@@ -63,12 +64,12 @@ namespace Cake.Unity
         /// <summary>
         /// Build a 32-bit standalone Windows player (for example, -buildWindowsPlayer path/to/your/build.exe).
         /// </summary>
-        public FilePath BuildWindowsPlayer { get; set; }
+        public FilePath? BuildWindowsPlayer { get; set; }
 
         /// <summary>
         /// Build a 64-bit standalone Windows player (for example, -buildWindows64Player path/to/your/build.exe)
         /// </summary>
-        public FilePath BuildWindows64Player { get; set; }
+        public FilePath? BuildWindows64Player { get; set; }
 
         /// <summary>
         /// Detailed debugging feature. StackTraceLogging allows you to allow detailed logging. (for example, -stackTraceLogType Full)
@@ -79,38 +80,38 @@ namespace Cake.Unity
         /// Connect to the specified Cache Server on startup, overriding any configuration stored in the Editor Preferences.
         /// Set string as host:port
         /// </summary>
-        public string CacheServerIPAddress { get; set; }
+        public string? CacheServerIPAddress { get; set; }
 
         /// <summary>
         /// Create an empty project at the given path.
         /// </summary>
-        public FilePath CreateProject { get; set; }
+        public FilePath? CreateProject { get; set; }
 
         /// <summary>
         /// Filter editor tests by categories. Separate test categories with a comma.
         /// </summary>
-        public string EditorTestsCategories { get; set; }
+        public string? EditorTestsCategories { get; set; }
 
         /// <summary>
         /// Filter editor tests by names. Separate test names with a comma.
         /// </summary>
-        public string EditorTestsFilter { get; set; }
+        public string? EditorTestsFilter { get; set; }
 
         /// <summary>
         /// Path location to place the result file. If the path is a folder, the command line uses a default file name. If not specified, it places the results in the project’s root folder.
         /// </summary>
-        public FilePath TestResults { get; set; }
+        public FilePath? TestResults { get; set; }
 
         /// <summary>
         /// Execute the static method as soon as Unity opens the project, and after the optional Asset server update is complete. You can use this to do tasks such as continous integration, performing Unit Tests, making builds or preparing data. To return an error from the command line process, either throw an exception which causes Unity to exit with return code 1, or call EditorApplication.Exit with a non-zero return code. To pass parameters, add them to the command line and retrieve them inside the function using System.Environment.GetCommandLineArgs. To use -executeMethod, you need to place the enclosing script in an Editor folder. The method you execute must be defined as static.
         /// </summary>
-        public string ExecuteMethod { get; set; }
+        public string? ExecuteMethod { get; set; }
 
         /// <summary>
         /// Export a package, given a path (or set of given paths). Asset paths are set relative to the Unity project root.
         /// Currently, this option only exports whole folders at a time. You normally need to use this command with the -projectPath argument.
         /// </summary>
-        public ExportPackage ExportPackage { get; set; }
+        public ExportPackage? ExportPackage { get; set; }
 
         /// <summary>
         /// Windows only. Make the Editor use Direct3D 11 for rendering. Normally the graphics API depends on Player settings(typically defaults to D3D11).
@@ -155,12 +156,12 @@ namespace Cake.Unity
         /// <summary>
         /// Import the given package. No import dialog is shown.
         /// </summary>
-        public FilePath ImportPackage { get; set; }
+        public FilePath? ImportPackage { get; set; }
 
         /// <summary>
         /// Specify where the Editor or Windows/Linux/OSX standalone log file are written. If the path is ommitted, OSX and Linux will write output to the console. Windows uses the path %LOCALAPPDATA%\Unity\Editor\Editor.log as a default.
         /// </summary>
-        public FilePath LogFile { get; set; }
+        public FilePath? LogFile { get; set; }
 
         /// <summary>
         /// When running in batch mode, do not initialize the graphics device at all. This makes it possible to run your automated workflows on machines that don’t even have a GPU (automated workflows only work when you have a window in focus, otherwise you can’t send simulated input commands). Note that -nographics does not allow you to bake GI, because Enlighten requires GPU acceleration.
@@ -175,12 +176,12 @@ namespace Cake.Unity
         /// <summary>
         /// Enter a password into the log-in form during activation of the Unity Editor.
         /// </summary>
-        public string Password { get; set; }
+        public string? Password { get; set; }
 
         /// <summary>
         /// Open the project at the given path.
         /// </summary>
-        public DirectoryPath ProjectPath { get; set; }
+        public DirectoryPath? ProjectPath { get; set; }
 
         /// <summary>
         /// Quit the Unity Editor after other commands have finished executing. Note that this can cause error messages to be hidden (however, they still appear in the Editor.log file).
@@ -205,7 +206,7 @@ namespace Cake.Unity
         /// <summary>
         /// Activate Unity with the specified serial key. It is good practice to pass the -batchmode and -quit arguments as well, in order to quit Unity when done, if using this for automated activation of Unity. Please allow a few seconds before the license file is created, because Unity needs to communicate with the license server. Make sure that license file folder exists, and has appropriate permissions before running Unity with this argument. If activation fails, see the Editor.log for info.
         /// </summary>
-        public string Serial { get; set; }
+        public string? Serial { get; set; }
 
         /// <summary>
         /// Supported only on Android. Sets the default texture compression to the desired format before importing a texture or building the project. This is so you don’t have to import the texture again with the format you want.
@@ -220,12 +221,12 @@ namespace Cake.Unity
         /// <summary>
         /// Enter a username into the log-in form during activation of the Unity Editor.
         /// </summary>
-        public string Username { get; set; }
+        public string? Username { get; set; }
 
         /// <summary>
         /// Specify a space-separated list of assembly names as parameters for Unity to ignore on automatic updates. Pass empty array to ignore all assemblies.
         /// </summary>
-        public string[] DisableAssemblyUpdater { get; set; }
+        public string[]? DisableAssemblyUpdater { get; set; }
 
         /// <summary>
         /// Use this command line option to specify that APIUpdater should run when Unity is launched in batch mode. Omitting this command line argument when launching Unity in batch mode results in APIUpdater not running which can lead to compiler errors. Note that in versions prior to 2017.2 there’s no way to not run APIUpdater when Unity is launched in batch mode.
@@ -275,18 +276,17 @@ namespace Cake.Unity
             if (AssetServerUpdate != null)
             {
                 builder.Append("-assetServerUpdate");
-                if (AssetServerUpdate.Port.HasValue)
-                    builder.Append(AssetServerUpdate.IP + ":" + AssetServerUpdate.Port.Value.ToString());
+                if (AssetServerUpdate.Port.IsSome)
+                    builder.Append(AssetServerUpdate.IP + ":" + AssetServerUpdate.Port.Value());
                 else
                     builder.Append(AssetServerUpdate.IP);
                 builder.Append(AssetServerUpdate.ProjectName);
                 builder.Append(AssetServerUpdate.Username);
                 builder.Append(AssetServerUpdate.Password);
-                if (AssetServerUpdate.Revision != null)
-                {
+                AssetServerUpdate.Revision.IfSome(rev => {
                     builder.Append("r");
-                    builder.Append(AssetServerUpdate.Revision);
-                }
+                    builder.Append(AssetServerUpdate.Revision.ValueUnsafe());
+                });
             }
 
             if (BatchMode)

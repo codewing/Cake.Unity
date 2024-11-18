@@ -8,6 +8,8 @@ using Cake.Core.Diagnostics;
 using Cake.Core.IO;
 using Cake.Unity.SeekersOfEditors;
 using Cake.Unity.Version;
+using LanguageExt;
+using LanguageExt.UnsafeValueAccess;
 using static Cake.Unity.Version.UnityReleaseStage;
 
 namespace Cake.Unity
@@ -15,7 +17,7 @@ namespace Cake.Unity
     [CakeAliasCategory("Unity")]
     public static class UnityAliases
     {
-        private static IReadOnlyCollection<UnityEditorDescriptor> unityEditorsCache;
+        private static IReadOnlyCollection<UnityEditorDescriptor>? unityEditorsCache = null;
 
         /// <summary>
         /// Executes Unity Editor via command-line interface.
@@ -25,7 +27,7 @@ namespace Cake.Unity
         /// <example>
         /// <code>
         /// var unityEditor = FindUnityEditor(2018, 3) ?? throw new Exception("Cannot find Unity Editor 2018.3.");
-        /// 
+        ///
         /// UnityEditor(unityEditor.Path, new UnityEditorArguments
         /// {
         ///     ProjectPath = "A:/UnityProject",
@@ -50,7 +52,7 @@ namespace Cake.Unity
         /// <example>
         /// <code>
         /// var unityEditor = FindUnityEditor(2018, 3) ?? throw new Exception("Cannot find Unity Editor 2018.3.");
-        /// 
+        ///
         /// UnityEditor(
         ///     unityEditor.Path,
         ///     new UnityEditorArguments
@@ -99,7 +101,7 @@ namespace Cake.Unity
         [CakeAliasCategory("Execute")]
         [CakeNamespaceImport("Cake.Unity.Arguments")]
         public static void UnityEditor(this ICakeContext context,
-            UnityEditorDescriptor unityEditor, UnityEditorArguments arguments, UnityEditorSettings settings = null) =>
+            UnityEditorDescriptor unityEditor, UnityEditorArguments arguments, UnityEditorSettings? settings = null) =>
             new UnityEditor(context.FileSystem, context.Environment, context.ProcessRunner, context.Tools, context.Log)
                 .Run(unityEditor, arguments, settings ?? new UnityEditorSettings());
 
@@ -134,7 +136,7 @@ namespace Cake.Unity
         [CakeAliasCategory("Execute")]
         [CakeNamespaceImport("Cake.Unity.Arguments")]
         public static void UnityEditor(this ICakeContext context,
-            int versionYear, int versionStream, int versionUpdate, char versionSuffixCharacter, int versionSuffixNumber, UnityEditorArguments arguments, UnityEditorSettings settings = null) =>
+            int versionYear, int versionStream, int versionUpdate, char versionSuffixCharacter, int versionSuffixNumber, UnityEditorArguments arguments, UnityEditorSettings? settings = null) =>
             new UnityEditor(context.FileSystem, context.Environment, context.ProcessRunner, context.Tools, context.Log)
                 .Run(
                     context.FindUnityEditor(versionYear, versionStream, versionUpdate, versionSuffixCharacter, versionSuffixNumber)
@@ -172,7 +174,7 @@ namespace Cake.Unity
         [CakeAliasCategory("Execute")]
         [CakeNamespaceImport("Cake.Unity.Arguments")]
         public static void UnityEditor(this ICakeContext context,
-            int versionYear, int versionStream, int versionUpdate, char versionSuffixCharacter, UnityEditorArguments arguments, UnityEditorSettings settings = null) =>
+            int versionYear, int versionStream, int versionUpdate, char versionSuffixCharacter, UnityEditorArguments arguments, UnityEditorSettings? settings = null) =>
             new UnityEditor(context.FileSystem, context.Environment, context.ProcessRunner, context.Tools, context.Log)
                 .Run(
                     context.FindUnityEditor(versionYear, versionStream, versionUpdate, versionSuffixCharacter)
@@ -209,7 +211,7 @@ namespace Cake.Unity
         [CakeAliasCategory("Execute")]
         [CakeNamespaceImport("Cake.Unity.Arguments")]
         public static void UnityEditor(this ICakeContext context,
-            int versionYear, int versionStream, int versionUpdate, UnityEditorArguments arguments, UnityEditorSettings settings = null) =>
+            int versionYear, int versionStream, int versionUpdate, UnityEditorArguments arguments, UnityEditorSettings? settings = null) =>
             new UnityEditor(context.FileSystem, context.Environment, context.ProcessRunner, context.Tools, context.Log)
                 .Run(
                     context.FindUnityEditor(versionYear, versionStream, versionUpdate)
@@ -245,7 +247,7 @@ namespace Cake.Unity
         [CakeAliasCategory("Execute")]
         [CakeNamespaceImport("Cake.Unity.Arguments")]
         public static void UnityEditor(this ICakeContext context,
-            int versionYear, int versionStream, UnityEditorArguments arguments, UnityEditorSettings settings = null) =>
+            int versionYear, int versionStream, UnityEditorArguments arguments, UnityEditorSettings? settings = null) =>
             new UnityEditor(context.FileSystem, context.Environment, context.ProcessRunner, context.Tools, context.Log)
                 .Run(
                     context.FindUnityEditor(versionYear, versionStream)
@@ -280,7 +282,7 @@ namespace Cake.Unity
         [CakeAliasCategory("Execute")]
         [CakeNamespaceImport("Cake.Unity.Arguments")]
         public static void UnityEditor(this ICakeContext context,
-            int versionYear, UnityEditorArguments arguments, UnityEditorSettings settings = null) =>
+            int versionYear, UnityEditorArguments arguments, UnityEditorSettings? settings = null) =>
             new UnityEditor(context.FileSystem, context.Environment, context.ProcessRunner, context.Tools, context.Log)
                 .Run(
                     context.FindUnityEditor(versionYear)
@@ -313,28 +315,29 @@ namespace Cake.Unity
         [CakeAliasCategory("Execute")]
         [CakeNamespaceImport("Cake.Unity.Arguments")]
         public static void UnityEditor(this ICakeContext context,
-            UnityEditorArguments arguments, UnityEditorSettings settings = null)
+            UnityEditorArguments arguments, UnityEditorSettings? settings = null)
         {
-            UnityEditorDescriptor unityEditor;
+            UnityEditorDescriptor? unityEditor;
 
-            UnityVersion version = null;
+            Option<UnityVersion> versionOpt = Option<UnityVersion>.None;
             if (arguments.ProjectPath != null)
-                version = context.GetUnityVersionFromProjectPath(arguments.ProjectPath);
+                versionOpt = context.GetUnityVersionFromProjectPath(arguments.ProjectPath);
 
-            if (version != null)
+            if (versionOpt.IsSome)
             {
-                context.Log.Information("Detected Unity version from project: {0}, attempting to find UnityEditor.", version);
+                var version = versionOpt.ValueUnsafe();
+                context.Log.Information("Detected Unity version from project: {0}, attempting to find UnityEditor.", versionOpt);
 
                 unityEditor =
-                    context.FindUnityEditor(version.Year, version.Stream, version.Update, version.SuffixCharacter.Value, version.SuffixNumber.Value)
-                    ?? context.FindUnityEditor(version.Year, version.Stream, version.Update, version.SuffixCharacter.Value)
+                    context.FindUnityEditor(version.Year, version.Stream, version.Update, version.SuffixCharacter, version.SuffixNumber)
+                    ?? context.FindUnityEditor(version.Year, version.Stream, version.Update, version.SuffixCharacter)
                     ?? context.FindUnityEditor(version.Year, version.Stream, version.Update)
                     ?? context.FindUnityEditor(version.Year, version.Stream)
                     ?? context.FindUnityEditor(version.Year)
                     ?? throw new Exception("Failed to locate Unity Editor. Try to specify it's path explicitly.");
 
                 if (!unityEditor.Version.Equals(version))
-                    context.Log.Warning("Can't locate Unity {0} exactly, using {1} instead", version, unityEditor.Version);
+                    context.Log.Warning("Can't locate Unity {0} exactly, using {1} instead", versionOpt, unityEditor.Version);
             }
             else
             {
@@ -368,7 +371,7 @@ namespace Cake.Unity
         [CakeMethodAlias]
         [CakeAliasCategory("Locate")]
         [CakeNamespaceImport("Cake.Unity.Version")]
-        public static UnityEditorDescriptor FindUnityEditor(this ICakeContext context) =>
+        public static UnityEditorDescriptor? FindUnityEditor(this ICakeContext context) =>
             Enumerable.FirstOrDefault
             (
                 from editor in context.FindUnityEditors()
@@ -401,7 +404,7 @@ namespace Cake.Unity
         [CakeMethodAlias]
         [CakeAliasCategory("Locate")]
         [CakeNamespaceImport("Cake.Unity.Version")]
-        public static UnityEditorDescriptor FindUnityEditor(this ICakeContext context, int year) =>
+        public static UnityEditorDescriptor? FindUnityEditor(this ICakeContext context, int year) =>
             Enumerable.FirstOrDefault
             (
                 from editor in context.FindUnityEditors()
@@ -436,7 +439,7 @@ namespace Cake.Unity
         [CakeMethodAlias]
         [CakeAliasCategory("Locate")]
         [CakeNamespaceImport("Cake.Unity.Version")]
-        public static UnityEditorDescriptor FindUnityEditor(this ICakeContext context, int year, int stream) =>
+        public static UnityEditorDescriptor? FindUnityEditor(this ICakeContext context, int year, int stream) =>
             Enumerable.FirstOrDefault
             (
                 from editor in context.FindUnityEditors()
@@ -471,7 +474,7 @@ namespace Cake.Unity
         [CakeMethodAlias]
         [CakeAliasCategory("Locate")]
         [CakeNamespaceImport("Cake.Unity.Version")]
-        public static UnityEditorDescriptor FindUnityEditor(this ICakeContext context, int year, int stream, int update) =>
+        public static UnityEditorDescriptor? FindUnityEditor(this ICakeContext context, int year, int stream, int update) =>
             Enumerable.FirstOrDefault
             (
                 from editor in context.FindUnityEditors()
@@ -507,7 +510,7 @@ namespace Cake.Unity
         [CakeMethodAlias]
         [CakeAliasCategory("Locate")]
         [CakeNamespaceImport("Cake.Unity.Version")]
-        public static UnityEditorDescriptor FindUnityEditor(this ICakeContext context, int year, int stream, int update, char suffixCharacter) =>
+        public static UnityEditorDescriptor? FindUnityEditor(this ICakeContext context, int year, int stream, int update, char? suffixCharacter) =>
             Enumerable.FirstOrDefault
             (
                 from editor in context.FindUnityEditors()
@@ -543,7 +546,7 @@ namespace Cake.Unity
         [CakeMethodAlias]
         [CakeAliasCategory("Locate")]
         [CakeNamespaceImport("Cake.Unity.Version")]
-        public static UnityEditorDescriptor FindUnityEditor(this ICakeContext context, int year, int stream, int update, char suffixCharacter, int suffixNumber) =>
+        public static UnityEditorDescriptor? FindUnityEditor(this ICakeContext context, int year, int stream, int update, char? suffixCharacter, int? suffixNumber) =>
             Enumerable.FirstOrDefault
             (
                 from editor in context.FindUnityEditors()
@@ -590,7 +593,7 @@ namespace Cake.Unity
             switch (stage)
             {
                 case Final:
-                case Patch:
+                case UnityReleaseStage.Patch:
                     return 1;
 
                 case Beta:
@@ -604,7 +607,7 @@ namespace Cake.Unity
             }
         }
 
-        private static UnityVersion GetUnityVersionFromProjectPath(this ICakeContext context, DirectoryPath projectPath)
+        private static UnityVersion? GetUnityVersionFromProjectPath(this ICakeContext context, DirectoryPath projectPath)
         {
             context.Log.Debug("Determining Unity version for project: {0}", projectPath);
             try

@@ -54,7 +54,7 @@ namespace Cake.Unity
                 logForwardCancellation.Cancel();
             });
 
-            ForwardLogFileToOutputUntilCancel(arguments.LogFile, logForwardCancellation.Token);
+            ForwardLogFileToOutputUntilCancel(arguments.LogFile!, logForwardCancellation.Token);
 
             ProcessExitCode(process.GetExitCode());
         }
@@ -148,7 +148,7 @@ namespace Cake.Unity
                 while (HasLinesToRead() || ShouldWork())
                 {
                     if (HasLinesToRead())
-                        yield return reader.ReadLine();
+                        yield return reader.ReadLine()!;
                     else
                         Sleep();
                 }
@@ -160,7 +160,7 @@ namespace Cake.Unity
             using (var stream = file.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             using (var reader = new StreamReader(stream))
                 while (!reader.EndOfStream)
-                    yield return reader.ReadLine();
+                    yield return reader.ReadLine()!;
         }
 
         private void ErrorIfRealTimeLogSetButLogFileNotSet(UnityEditorSettings settings, UnityEditorArguments arguments)
